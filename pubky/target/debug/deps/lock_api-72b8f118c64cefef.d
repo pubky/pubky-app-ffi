@@ -1,0 +1,10 @@
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/liblock_api-72b8f118c64cefef.rmeta: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/mutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/remutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/rwlock.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/liblock_api-72b8f118c64cefef.rlib: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/mutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/remutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/rwlock.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/lock_api-72b8f118c64cefef.d: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/mutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/remutex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/rwlock.rs
+
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/lib.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/mutex.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/remutex.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/lock_api-0.4.12/src/rwlock.rs:

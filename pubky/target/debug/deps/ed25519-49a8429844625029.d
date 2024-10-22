@@ -1,0 +1,10 @@
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libed25519-49a8429844625029.rmeta: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/hex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/serde.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/../README.md
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libed25519-49a8429844625029.rlib: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/hex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/serde.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/../README.md
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/ed25519-49a8429844625029.d: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/hex.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/serde.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/../README.md
+
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/lib.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/hex.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/serde.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ed25519-2.2.3/src/../README.md:

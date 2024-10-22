@@ -1,0 +1,10 @@
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libidna-37adc6e8dac3f537.rmeta: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/punycode.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46_mapping_table.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libidna-37adc6e8dac3f537.rlib: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/punycode.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46_mapping_table.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/idna-37adc6e8dac3f537.d: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/punycode.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46_mapping_table.rs
+
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/lib.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/punycode.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/idna-0.5.0/src/uts46_mapping_table.rs:

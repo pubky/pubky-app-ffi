@@ -1,0 +1,10 @@
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libautocfg-3542bd38a9611a66.rmeta: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/error.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/rustc.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/version.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/libautocfg-3542bd38a9611a66.rlib: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/error.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/rustc.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/version.rs
+
+/Users/coreyphillips/Documents/synonym/pr/corey/pubky-social-bindings/github/pr/react-native-pubky-social/rust/pubky/target/debug/deps/autocfg-3542bd38a9611a66.d: /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/lib.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/error.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/rustc.rs /Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/version.rs
+
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/lib.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/error.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/rustc.rs:
+/Users/coreyphillips/.cargo/registry/src/index.crates.io-6f17d22bba15001f/autocfg-1.3.0/src/version.rs:
