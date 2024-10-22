@@ -12,6 +12,14 @@ JNILIBS_DIR="$BASE_DIR/jniLibs"
 mkdir -p "$BASE_DIR"
 mkdir -p "$JNILIBS_DIR"
 
+# Remove previous build
+echo "Removing previous build..."
+rm -rf bindings/android/
+
+# Cargo Build
+echo "Building Rust libraries..."
+cargo build && cd pubky && cargo build && cd pubky && cargo build && cd ../ && cd pubky-common && cargo build && cd ../ && cd pubky-homeserver && cargo build && cd ../../
+
 # Modify Cargo.toml
 echo "Updating Cargo.toml..."
 sed -i '' 's/crate_type = .*/crate_type = ["cdylib"]/' Cargo.toml
@@ -71,6 +79,7 @@ echo "Moving Kotlin file to final location..."
 find "$TMP_DIR" -name "pubkysocialmobile.kt" -exec mv {} "$BASE_DIR/" \;
 
 # Clean up temp directory and any remaining uniffi directories
+echo "Cleaning up temporary files..."
 rm -rf "$TMP_DIR"
 rm -rf "$BASE_DIR/uniffi"
 
