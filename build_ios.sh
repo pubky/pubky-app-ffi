@@ -4,10 +4,15 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 
 echo "Starting iOS build process..."
 
+# Remove previous build
+echo "Removing previous build..."
+rm -rf bindings/ios/
+
 # Set iOS deployment target
 export IPHONEOS_DEPLOYMENT_TARGET=13.4
 
 # Cargo Build
+echo "Building Rust libraries..."
 cargo build && cd pubky && cargo build && cd pubky && cargo build && cd ../ && cd pubky-common && cargo build && cd ../ && cd pubky-homeserver && cargo build && cd ../../
 
 # Modify Cargo.toml
@@ -33,7 +38,8 @@ cargo run --bin uniffi-bindgen generate --library ./target/release/libpubkysocia
 
 
 # Rename modulemap file
-# mv bindings/pubkymobileFFI.modulemap bindings/module.modulemap
+echo "Renaming modulemap file..."
+mv bindings/ios/pubkysocialmobileFFI.modulemap bindings/ios/module.modulemap
 
 # Create XCFramework
 echo "Creating XCFramework..."
