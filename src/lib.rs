@@ -1,11 +1,10 @@
-use std::{str, collections::HashMap, sync::{Arc, Mutex}, time::Duration};
+use std::{str, sync::{Arc, Mutex}, time::Duration};
 use base64::{Engine, engine::general_purpose};
 use pubky::PubkyClient;
 use hex::{self, ToHex};
-use serde::Serialize;
 use url::Url;
 use tokio::{self, runtime::Runtime, time};
-use pkarr::{PkarrClient, SignedPacket, Keypair, dns, PublicKey};
+use pkarr::{dns, SignedPacket, Keypair, PublicKey};
 use pkarr::dns::{rdata::{RData, HTTPS, SVCB}, Packet, ResourceRecord};
 use serde_json::{json, to_vec};
 use once_cell::sync::Lazy;
@@ -37,7 +36,6 @@ pub use keypair::*;
 pub use auth::*;
 use crate::models::bookmark::PubkyAppBookmark;
 use crate::models::file::PubkyAppFile;
-use crate::utils::*;
 
 uniffi::setup_scaffolding!();
 
@@ -790,7 +788,7 @@ pub fn publish(record_name: String, record_content: String, secret_key: String) 
     runtime.block_on(async {
         let client = PUBKY_CLIENT.clone();
 
-        let keypair = match get_keypair_from_secret_key(&secret_key) {
+        let keypair: Keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
             Err(error) => return create_response_vector(true, error),
         };
@@ -908,7 +906,7 @@ pub fn decrypt_recovery_file(recovery_file: String, passphrase: String) -> Vec<S
     };
     let keypair = match PubkyClient::decrypt_recovery_file(&recovery_file_bytes, &passphrase) {
         Ok(keypair) => keypair,
-        Err(error) => return create_response_vector(true, "Failed to decrypt recovery file".to_string()),
+        Err(_) => return create_response_vector(true, "Failed to decrypt recovery file".to_string()),
     };
     let secret_key = get_secret_key_from_keypair(&keypair);
     create_response_vector(false, secret_key)
