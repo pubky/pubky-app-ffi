@@ -39,9 +39,45 @@ use crate::models::file::PubkyAppFile;
 
 uniffi::setup_scaffolding!();
 
-static PUBKY_CLIENT: Lazy<Arc<PubkyClient>> = Lazy::new(|| {
-    Arc::new(PubkyClient::testnet())
-});
+pub struct NetworkClient {
+    client: Mutex<Arc<PubkyClient>>,
+}
+
+impl NetworkClient {
+    fn new() -> Self {
+        Self {
+            client: Mutex::new(Arc::new(PubkyClient::default()))
+        }
+    }
+
+    pub fn switch_network(&self, use_testnet: bool) {
+        let new_client = if use_testnet {
+            Arc::new(PubkyClient::testnet())
+        } else {
+            Arc::new(PubkyClient::default())
+        };
+
+        let mut client = self.client.lock().unwrap();
+        *client = new_client;
+    }
+
+    pub fn get_client(&self) -> Arc<PubkyClient> {
+        self.client.lock().unwrap().clone()
+    }
+}
+
+static NETWORK_CLIENT: Lazy<NetworkClient> = Lazy::new(|| NetworkClient::new());
+
+// Replace the old PUBKY_CLIENT with this
+pub fn get_pubky_client() -> Arc<PubkyClient> {
+    NETWORK_CLIENT.get_client()
+}
+
+#[uniffi::export]
+pub fn switch_network(use_testnet: bool) -> Vec<String> {
+    NETWORK_CLIENT.switch_network(use_testnet);
+    create_response_vector(false, format!("Switched to {} network", if use_testnet { "testnet" } else { "mainnet" }))
+}
 
 static TOKIO_RUNTIME: Lazy<Arc<Runtime>> = Lazy::new(|| {
     Arc::new(
@@ -59,7 +95,7 @@ fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Ve
             Err(error) => return create_response_vector(true, error),
         };
         let user_id = keypair.public_key().to_z32();
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let homeserver_public_key = match PublicKey::try_from(homeserver) {
             Ok(key) => key,
             Err(error) => return create_response_vector(true, format!("Invalid homeserver public key: {}", error)),
@@ -86,7 +122,7 @@ fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Ve
 fn create_post(user_id: String, post: PubkyAppPost) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let post_id = post.create_id();
         let post_json = match to_vec(&post) {
             Ok(json) => json,
@@ -103,7 +139,7 @@ fn create_post(user_id: String, post: PubkyAppPost) -> Vec<String> {
 #[uniffi::export]
 fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let tag = PubkyAppTag {
             uri: format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id),
@@ -135,7 +171,7 @@ fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
 #[uniffi::export]
 fn cleanup_user(pubky: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let url = format!("pubky://{}/pub/pubky.app/profile.json", pubky);
         let parsed_url = match Url::parse(&url) {
@@ -154,7 +190,7 @@ fn cleanup_user(pubky: String) -> Vec<String> {
 #[uniffi::export]
 fn cleanup_post(pubky: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let url = format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id);
         let parsed_url = match Url::parse(&url) {
@@ -173,7 +209,7 @@ fn cleanup_post(pubky: String, post_id: String) -> Vec<String> {
 #[uniffi::export]
 fn delete_tag(tag_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let parsed_url = match Url::parse(&tag_url) {
             Ok(url) => url,
@@ -191,7 +227,7 @@ fn delete_tag(tag_url: String) -> Vec<String> {
 #[uniffi::export]
 fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let bookmark = PubkyAppBookmark {
             uri: format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id),
@@ -223,7 +259,7 @@ fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
 #[uniffi::export]
 fn delete_bookmark(bookmark_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let parsed_url = match Url::parse(&bookmark_url) {
             Ok(url) => url,
@@ -244,7 +280,7 @@ fn create_file(
     file: &PubkyAppFile,
 ) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let file_id = file.create_id();
         let file_json = match to_vec(file) {
@@ -268,7 +304,7 @@ fn create_file(
 #[uniffi::export]
 fn cleanup_file(pubky: String, file_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let url = format!("pubky://{}/pub/pubky.app/files/{}", pubky, file_id);
         let parsed_url = match Url::parse(&url) {
@@ -290,7 +326,7 @@ fn create_follow(
     followee_pubky: String,
 ) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let follow_relationship = PubkyAppFollow {
             created_at: Utc::now().timestamp_millis(),
@@ -315,7 +351,7 @@ fn create_follow(
 #[uniffi::export]
 fn delete_follow(follow_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
-    let client = PUBKY_CLIENT.clone();
+    let client = get_pubky_client();
     runtime.block_on(async {
         let parsed_url = match Url::parse(&follow_url) {
             Ok(url) => url,
@@ -397,7 +433,7 @@ pub fn start_internal_event_loop() {
 pub fn delete_file(url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let parsed_url = match Url::parse(&url) {
             Ok(url) => url,
             Err(_) => return create_response_vector(true, "Failed to parse URL".to_string()),
@@ -413,7 +449,7 @@ pub fn delete_file(url: String) -> Vec<String> {
 pub fn session(pubky: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let public_key = match PublicKey::try_from(pubky) {
             Ok(key) => key,
             Err(error) => return create_response_vector(true, format!("Invalid homeserver public key: {}", error)),
@@ -485,7 +521,7 @@ pub fn get_public_key_from_secret_key(secret_key: String) -> Vec<String> {
 pub fn publish_https(record_name: String, target: String, secret_key: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
 
         let keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
@@ -537,7 +573,7 @@ pub fn resolve_https(public_key: String) -> Vec<String> {
             Err(e) => return create_response_vector(true, format!("Invalid public key: {}", e)),
         };
 
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
 
         match client.pkarr().resolve(&public_key).await {
             Ok(Some(signed_packet)) => {
@@ -617,7 +653,7 @@ pub fn resolve_https(public_key: String) -> Vec<String> {
 pub fn sign_up(secret_key: String, homeserver: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
             Err(error) => return create_response_vector(true, error),
@@ -639,7 +675,7 @@ pub fn sign_up(secret_key: String, homeserver: String) -> Vec<String> {
 pub fn sign_in(secret_key: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
             Err(error) => return create_response_vector(true, error),
@@ -657,7 +693,7 @@ pub fn sign_in(secret_key: String) -> Vec<String> {
 pub fn sign_out(secret_key: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
             Err(error) => return create_response_vector(true, error),
@@ -675,7 +711,7 @@ pub fn sign_out(secret_key: String) -> Vec<String> {
 pub fn put(url: String, content: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let trimmed_url = url.trim_end_matches('/');
         let parsed_url = match Url::parse(&trimmed_url) {
             Ok(url) => url,
@@ -694,7 +730,7 @@ pub fn put(url: String, content: String) -> Vec<String> {
 pub fn get(url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let trimmed_url = url.trim_end_matches('/');
         let parsed_url = match Url::parse(&trimmed_url) {
             Ok(url) => url,
@@ -730,7 +766,7 @@ pub fn resolve(public_key: String) -> Vec<String> {
             Ok(key) => key,
             Err(e) => return create_response_vector(true, format!("Invalid zbase32 encoded key: {}", e)),
         };
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
 
         match client.pkarr().resolve(&public_key).await {
             Ok(Some(signed_packet)) => {
@@ -786,7 +822,7 @@ pub fn resolve(public_key: String) -> Vec<String> {
 pub fn publish(record_name: String, record_content: String, secret_key: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
 
         let keypair: Keypair = match get_keypair_from_secret_key(&secret_key) {
             Ok(keypair) => keypair,
@@ -837,7 +873,7 @@ pub fn publish(record_name: String, record_content: String, secret_key: String) 
 pub fn list(url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
-        let client = PUBKY_CLIENT.clone();
+        let client = get_pubky_client();
         let trimmed_url = url.trim_end_matches('/');
         let parsed_url = match Url::parse(&trimmed_url) {
             Ok(url) => url,
