@@ -1,5 +1,5 @@
-# pubky-app-mobile-sdk
-Pubky App Mobile SDK
+# pubky-app-ffi
+Pubky App FFI
 
 ### To build both iOS and Android bindings:
 ```
