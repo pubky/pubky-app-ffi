@@ -18,7 +18,7 @@ export IPHONEOS_DEPLOYMENT_TARGET=13.4
 
 # Cargo Build
 echo "Building Rust libraries..."
-cargo build && cd pubky && cargo build && cd pubky && cargo build && cd ../ && cd pubky-common && cargo build && cd ../ && cd pubky-homeserver && cargo build && cd ../../
+cargo build
 
 # Modify Cargo.toml
 echo "Updating Cargo.toml..."
@@ -40,30 +40,30 @@ cargo build --release --target=aarch64-apple-ios
 # Generate Swift bindings
 echo "Generating Swift bindings..."
 # First, ensure any existing generated files are removed
-rm -rf ./bindings/ios/pubkysocialmobile.swift
-rm -rf ./bindings/ios/pubkysocialmobileFFI.h
-rm -rf ./bindings/ios/pubkysocialmobileFFI.modulemap
+rm -rf ./bindings/ios/pubkyapp.swift
+rm -rf ./bindings/ios/pubkyappFFI.h
+rm -rf ./bindings/ios/pubkyappFFI.modulemap
 rm -rf ./bindings/ios/Headers
 rm -rf ./bindings/ios/ios-arm64
 rm -rf ./bindings/ios/ios-arm64-sim
 
 cargo run --bin uniffi-bindgen generate \
-    --library ./target/release/libpubkysocialmobile.dylib \
+    --library ./target/release/libpubkyapp.dylib \
     --language swift \
     --out-dir ./bindings/ios \
     || { echo "Failed to generate Swift bindings"; exit 1; }
 
 # Handle modulemap file
 echo "Handling modulemap file..."
-if [ -f bindings/ios/pubkysocialmobileFFI.modulemap ]; then
-    mv bindings/ios/pubkysocialmobileFFI.modulemap bindings/ios/module.modulemap
+if [ -f bindings/ios/pubkyappFFI.modulemap ]; then
+    mv bindings/ios/pubkyappFFI.modulemap bindings/ios/module.modulemap
 else
     echo "Warning: modulemap file not found"
 fi
 
 # Clean up any existing XCFramework and temporary directories
 echo "Cleaning up existing XCFramework..."
-rm -rf "bindings/ios/PubkySocialMobile.xcframework"
+rm -rf "bindings/ios/PubkyApp.xcframework"
 rm -rf "bindings/ios/Headers"
 rm -rf "bindings/ios/ios-arm64"
 rm -rf "bindings/ios/ios-arm64-sim"
@@ -75,17 +75,17 @@ mkdir -p "bindings/ios/ios-arm64-sim/Headers"
 
 # Copy headers to architecture-specific directories
 echo "Copying headers to architecture directories..."
-cp bindings/ios/pubkysocialmobileFFI.h "bindings/ios/ios-arm64/Headers/"
+cp bindings/ios/pubkyappFFI.h "bindings/ios/ios-arm64/Headers/"
 cp bindings/ios/module.modulemap "bindings/ios/ios-arm64/Headers/"
-cp bindings/ios/pubkysocialmobileFFI.h "bindings/ios/ios-arm64-sim/Headers/"
+cp bindings/ios/pubkyappFFI.h "bindings/ios/ios-arm64-sim/Headers/"
 cp bindings/ios/module.modulemap "bindings/ios/ios-arm64-sim/Headers/"
 
 # Create XCFramework
 echo "Creating XCFramework..."
 xcodebuild -create-xcframework \
-    -library ./target/aarch64-apple-ios-sim/release/libpubkysocialmobile.a -headers "bindings/ios/ios-arm64-sim/Headers" \
-    -library ./target/aarch64-apple-ios/release/libpubkysocialmobile.a -headers "bindings/ios/ios-arm64/Headers" \
-    -output "bindings/ios/PubkySocialMobile.xcframework" \
+    -library ./target/aarch64-apple-ios-sim/release/libpubkyapp.a -headers "bindings/ios/ios-arm64-sim/Headers" \
+    -library ./target/aarch64-apple-ios/release/libpubkyapp.a -headers "bindings/ios/ios-arm64/Headers" \
+    -output "bindings/ios/PubkyApp.xcframework" \
     || { echo "Failed to create XCFramework"; exit 1; }
 
 # Clean up temporary directories
