@@ -2,18 +2,18 @@
 name = "pubkyapp"
 version = "0.1.0"
 edition = "2021"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-crate_type = ["cdylib"]
+crate-type = ["cdylib", "staticlib", "rlib"]
 name = "pubkyapp"
 
 [[bin]]
-name = "testing"
-path = "testing/main.rs"
+name = "example"
+path = "example/main.rs"
 
-[net]
-git-fetch-with-cli = true
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
 
 [dependencies]
 uniffi = { version = "0.25.3", features = [ "cli" ] }
@@ -34,3 +34,8 @@ blake3 = "1.5.4"
 pubky = "0.3.0"
 pkarr = "2.2.1-alpha.2"
 pubky-common = "0.1.0"
+
+[dev-dependencies]
+tokio = { version = "1.40.0", features = ["full"] }
+serde_json = "1.0.114"
+hex = "0.4.3"
