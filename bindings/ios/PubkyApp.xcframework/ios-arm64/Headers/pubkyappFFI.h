@@ -81,7 +81,7 @@ RustBuffer uniffi_pubkyapp_fn_func_create_file(RustBuffer pubky, RustBuffer file
 );
 RustBuffer uniffi_pubkyapp_fn_func_create_follow(RustBuffer follower_pubky, RustBuffer followee_pubky, RustCallStatus *_Nonnull out_status
 );
-RustBuffer uniffi_pubkyapp_fn_func_create_post(RustBuffer user_id, RustBuffer post, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_pubkyapp_fn_func_create_post(RustBuffer pubky, RustBuffer post, RustCallStatus *_Nonnull out_status
 );
 RustBuffer uniffi_pubkyapp_fn_func_create_recovery_file(RustBuffer secret_key, RustBuffer passphrase, RustCallStatus *_Nonnull out_status
 );
@@ -119,11 +119,16 @@ RustBuffer uniffi_pubkyapp_fn_func_put(RustBuffer url, RustBuffer content, RustC
 void uniffi_pubkyapp_fn_func_remove_event_listener(RustCallStatus *_Nonnull out_status
     
 );
+RustBuffer uniffi_pubkyapp_fn_func_reset_application_domain(RustCallStatus *_Nonnull out_status
+    
+);
 RustBuffer uniffi_pubkyapp_fn_func_resolve(RustBuffer public_key, RustCallStatus *_Nonnull out_status
 );
 RustBuffer uniffi_pubkyapp_fn_func_resolve_https(RustBuffer public_key, RustCallStatus *_Nonnull out_status
 );
 RustBuffer uniffi_pubkyapp_fn_func_session(RustBuffer pubky, RustCallStatus *_Nonnull out_status
+);
+RustBuffer uniffi_pubkyapp_fn_func_set_application_domain(RustBuffer domain, RustCallStatus *_Nonnull out_status
 );
 void uniffi_pubkyapp_fn_func_set_event_listener(uint64_t listener, RustCallStatus *_Nonnull out_status
 );
@@ -324,6 +329,9 @@ uint16_t uniffi_pubkyapp_checksum_func_put(void
 uint16_t uniffi_pubkyapp_checksum_func_remove_event_listener(void
     
 );
+uint16_t uniffi_pubkyapp_checksum_func_reset_application_domain(void
+    
+);
 uint16_t uniffi_pubkyapp_checksum_func_resolve(void
     
 );
@@ -331,6 +339,9 @@ uint16_t uniffi_pubkyapp_checksum_func_resolve_https(void
     
 );
 uint16_t uniffi_pubkyapp_checksum_func_session(void
+    
+);
+uint16_t uniffi_pubkyapp_checksum_func_set_application_domain(void
     
 );
 uint16_t uniffi_pubkyapp_checksum_func_set_event_listener(void

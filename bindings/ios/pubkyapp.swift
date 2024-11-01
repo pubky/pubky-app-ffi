@@ -1477,11 +1477,11 @@ public func createFollow(followerPubky: String, followeePubky: String)  -> [Stri
     )
 }
 
-public func createPost(userId: String, post: PubkyAppPost)  -> [String] {
+public func createPost(pubky: String, post: PubkyAppPost)  -> [String] {
     return try!  FfiConverterSequenceString.lift(
         try! rustCall() {
     uniffi_pubkyapp_fn_func_create_post(
-        FfiConverterString.lower(userId),
+        FfiConverterString.lower(pubky),
         FfiConverterTypePubkyAppPost.lower(post),$0)
 }
     )
@@ -1649,6 +1649,14 @@ public func removeEventListener()  {
 
 
 
+public func resetApplicationDomain()  -> [String] {
+    return try!  FfiConverterSequenceString.lift(
+        try! rustCall() {
+    uniffi_pubkyapp_fn_func_reset_application_domain($0)
+}
+    )
+}
+
 public func resolve(publicKey: String)  -> [String] {
     return try!  FfiConverterSequenceString.lift(
         try! rustCall() {
@@ -1672,6 +1680,15 @@ public func session(pubky: String)  -> [String] {
         try! rustCall() {
     uniffi_pubkyapp_fn_func_session(
         FfiConverterString.lower(pubky),$0)
+}
+    )
+}
+
+public func setApplicationDomain(domain: String)  -> [String] {
+    return try!  FfiConverterSequenceString.lift(
+        try! rustCall() {
+    uniffi_pubkyapp_fn_func_set_application_domain(
+        FfiConverterString.lower(domain),$0)
 }
     )
 }
@@ -1758,7 +1775,7 @@ private var initializationResult: InitializationResult {
     if (uniffi_pubkyapp_checksum_func_create_follow() != 46035) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_pubkyapp_checksum_func_create_post() != 21748) {
+    if (uniffi_pubkyapp_checksum_func_create_post() != 477) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_pubkyapp_checksum_func_create_recovery_file() != 29107) {
@@ -1812,6 +1829,9 @@ private var initializationResult: InitializationResult {
     if (uniffi_pubkyapp_checksum_func_remove_event_listener() != 62705) {
         return InitializationResult.apiChecksumMismatch
     }
+    if (uniffi_pubkyapp_checksum_func_reset_application_domain() != 2679) {
+        return InitializationResult.apiChecksumMismatch
+    }
     if (uniffi_pubkyapp_checksum_func_resolve() != 11786) {
         return InitializationResult.apiChecksumMismatch
     }
@@ -1819,6 +1839,9 @@ private var initializationResult: InitializationResult {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_pubkyapp_checksum_func_session() != 47645) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_pubkyapp_checksum_func_set_application_domain() != 5024) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_pubkyapp_checksum_func_set_event_listener() != 57085) {

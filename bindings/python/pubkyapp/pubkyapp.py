@@ -518,7 +518,7 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_create_follow() != 46035:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    if lib.uniffi_pubkyapp_checksum_func_create_post() != 21748:
+    if lib.uniffi_pubkyapp_checksum_func_create_post() != 477:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_create_recovery_file() != 29107:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -554,11 +554,15 @@ def _uniffi_check_api_checksums(lib):
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_remove_event_listener() != 62705:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_pubkyapp_checksum_func_reset_application_domain() != 2679:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_resolve() != 11786:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_resolve_https() != 24919:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_session() != 47645:
+        raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    if lib.uniffi_pubkyapp_checksum_func_set_application_domain() != 5024:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     if lib.uniffi_pubkyapp_checksum_func_set_event_listener() != 57085:
         raise InternalError("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
@@ -728,6 +732,10 @@ _UniffiLib.uniffi_pubkyapp_fn_func_remove_event_listener.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_pubkyapp_fn_func_remove_event_listener.restype = None
+_UniffiLib.uniffi_pubkyapp_fn_func_reset_application_domain.argtypes = (
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_pubkyapp_fn_func_reset_application_domain.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_pubkyapp_fn_func_resolve.argtypes = (
     _UniffiRustBuffer,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -743,6 +751,11 @@ _UniffiLib.uniffi_pubkyapp_fn_func_session.argtypes = (
     ctypes.POINTER(_UniffiRustCallStatus),
 )
 _UniffiLib.uniffi_pubkyapp_fn_func_session.restype = _UniffiRustBuffer
+_UniffiLib.uniffi_pubkyapp_fn_func_set_application_domain.argtypes = (
+    _UniffiRustBuffer,
+    ctypes.POINTER(_UniffiRustCallStatus),
+)
+_UniffiLib.uniffi_pubkyapp_fn_func_set_application_domain.restype = _UniffiRustBuffer
 _UniffiLib.uniffi_pubkyapp_fn_func_set_event_listener.argtypes = (
     ctypes.c_uint64,
     ctypes.POINTER(_UniffiRustCallStatus),
@@ -1103,6 +1116,9 @@ _UniffiLib.uniffi_pubkyapp_checksum_func_put.restype = ctypes.c_uint16
 _UniffiLib.uniffi_pubkyapp_checksum_func_remove_event_listener.argtypes = (
 )
 _UniffiLib.uniffi_pubkyapp_checksum_func_remove_event_listener.restype = ctypes.c_uint16
+_UniffiLib.uniffi_pubkyapp_checksum_func_reset_application_domain.argtypes = (
+)
+_UniffiLib.uniffi_pubkyapp_checksum_func_reset_application_domain.restype = ctypes.c_uint16
 _UniffiLib.uniffi_pubkyapp_checksum_func_resolve.argtypes = (
 )
 _UniffiLib.uniffi_pubkyapp_checksum_func_resolve.restype = ctypes.c_uint16
@@ -1112,6 +1128,9 @@ _UniffiLib.uniffi_pubkyapp_checksum_func_resolve_https.restype = ctypes.c_uint16
 _UniffiLib.uniffi_pubkyapp_checksum_func_session.argtypes = (
 )
 _UniffiLib.uniffi_pubkyapp_checksum_func_session.restype = ctypes.c_uint16
+_UniffiLib.uniffi_pubkyapp_checksum_func_set_application_domain.argtypes = (
+)
+_UniffiLib.uniffi_pubkyapp_checksum_func_set_application_domain.restype = ctypes.c_uint16
 _UniffiLib.uniffi_pubkyapp_checksum_func_set_event_listener.argtypes = (
 )
 _UniffiLib.uniffi_pubkyapp_checksum_func_set_event_listener.restype = ctypes.c_uint16
@@ -1982,11 +2001,11 @@ def create_follow(follower_pubky: "str",followee_pubky: "str") -> "typing.List[s
         _UniffiConverterString.lower(followee_pubky)))
 
 
-def create_post(user_id: "str",post: "PubkyAppPost") -> "typing.List[str]":
+def create_post(pubky: "str",post: "PubkyAppPost") -> "typing.List[str]":
     
     
     return _UniffiConverterSequenceString.lift(_rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_create_post,
-        _UniffiConverterString.lower(user_id),
+        _UniffiConverterString.lower(pubky),
         _UniffiConverterTypePubkyAppPost.lower(post)))
 
 
@@ -2110,6 +2129,10 @@ def remove_event_listener():
     _rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_remove_event_listener,)
 
 
+def reset_application_domain() -> "typing.List[str]":
+    return _UniffiConverterSequenceString.lift(_rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_reset_application_domain,))
+
+
 def resolve(public_key: "str") -> "typing.List[str]":
     
     return _UniffiConverterSequenceString.lift(_rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_resolve,
@@ -2126,6 +2149,12 @@ def session(pubky: "str") -> "typing.List[str]":
     
     return _UniffiConverterSequenceString.lift(_rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_session,
         _UniffiConverterString.lower(pubky)))
+
+
+def set_application_domain(domain: "str") -> "typing.List[str]":
+    
+    return _UniffiConverterSequenceString.lift(_rust_call(_UniffiLib.uniffi_pubkyapp_fn_func_set_application_domain,
+        _UniffiConverterString.lower(domain)))
 
 
 def set_event_listener(listener: "EventListener"):
@@ -2197,9 +2226,11 @@ __all__ = [
     "publish_https",
     "put",
     "remove_event_listener",
+    "reset_application_domain",
     "resolve",
     "resolve_https",
     "session",
+    "set_application_domain",
     "set_event_listener",
     "sign_in",
     "sign_out",

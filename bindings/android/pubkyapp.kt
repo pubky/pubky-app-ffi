@@ -404,7 +404,7 @@ internal interface _UniFFILib : Library {
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_create_follow(`followerPubky`: RustBuffer.ByValue,`followeePubky`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
-    fun uniffi_pubkyapp_fn_func_create_post(`userId`: RustBuffer.ByValue,`post`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    fun uniffi_pubkyapp_fn_func_create_post(`pubky`: RustBuffer.ByValue,`post`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_create_recovery_file(`secretKey`: RustBuffer.ByValue,`passphrase`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
@@ -440,11 +440,15 @@ internal interface _UniFFILib : Library {
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_remove_event_listener(_uniffi_out_err: RustCallStatus, 
     ): Unit
+    fun uniffi_pubkyapp_fn_func_reset_application_domain(_uniffi_out_err: RustCallStatus, 
+    ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_resolve(`publicKey`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_resolve_https(`publicKey`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_session(`pubky`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
+    ): RustBuffer.ByValue
+    fun uniffi_pubkyapp_fn_func_set_application_domain(`domain`: RustBuffer.ByValue,_uniffi_out_err: RustCallStatus, 
     ): RustBuffer.ByValue
     fun uniffi_pubkyapp_fn_func_set_event_listener(`listener`: Long,_uniffi_out_err: RustCallStatus, 
     ): Unit
@@ -620,11 +624,15 @@ internal interface _UniFFILib : Library {
     ): Short
     fun uniffi_pubkyapp_checksum_func_remove_event_listener(
     ): Short
+    fun uniffi_pubkyapp_checksum_func_reset_application_domain(
+    ): Short
     fun uniffi_pubkyapp_checksum_func_resolve(
     ): Short
     fun uniffi_pubkyapp_checksum_func_resolve_https(
     ): Short
     fun uniffi_pubkyapp_checksum_func_session(
+    ): Short
+    fun uniffi_pubkyapp_checksum_func_set_application_domain(
     ): Short
     fun uniffi_pubkyapp_checksum_func_set_event_listener(
     ): Short
@@ -676,7 +684,7 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_pubkyapp_checksum_func_create_follow() != 46035.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_pubkyapp_checksum_func_create_post() != 21748.toShort()) {
+    if (lib.uniffi_pubkyapp_checksum_func_create_post() != 477.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_pubkyapp_checksum_func_create_recovery_file() != 29107.toShort()) {
@@ -730,6 +738,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
     if (lib.uniffi_pubkyapp_checksum_func_remove_event_listener() != 62705.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_pubkyapp_checksum_func_reset_application_domain() != 2679.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if (lib.uniffi_pubkyapp_checksum_func_resolve() != 11786.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -737,6 +748,9 @@ private fun uniffiCheckApiChecksums(lib: _UniFFILib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_pubkyapp_checksum_func_session() != 47645.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_pubkyapp_checksum_func_set_application_domain() != 5024.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_pubkyapp_checksum_func_set_event_listener() != 57085.toShort()) {
@@ -1817,10 +1831,10 @@ fun `createFollow`(`followerPubky`: String, `followeePubky`: String): List<Strin
 }
 
 
-fun `createPost`(`userId`: String, `post`: PubkyAppPost): List<String> {
+fun `createPost`(`pubky`: String, `post`: PubkyAppPost): List<String> {
     return FfiConverterSequenceString.lift(
     rustCall() { _status ->
-    _UniFFILib.INSTANCE.uniffi_pubkyapp_fn_func_create_post(FfiConverterString.lower(`userId`),FfiConverterTypePubkyAppPost.lower(`post`),_status)
+    _UniFFILib.INSTANCE.uniffi_pubkyapp_fn_func_create_post(FfiConverterString.lower(`pubky`),FfiConverterTypePubkyAppPost.lower(`post`),_status)
 })
 }
 
@@ -1961,6 +1975,14 @@ fun `removeEventListener`() =
 
 
 
+fun `resetApplicationDomain`(): List<String> {
+    return FfiConverterSequenceString.lift(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_pubkyapp_fn_func_reset_application_domain(_status)
+})
+}
+
+
 fun `resolve`(`publicKey`: String): List<String> {
     return FfiConverterSequenceString.lift(
     rustCall() { _status ->
@@ -1981,6 +2003,14 @@ fun `session`(`pubky`: String): List<String> {
     return FfiConverterSequenceString.lift(
     rustCall() { _status ->
     _UniFFILib.INSTANCE.uniffi_pubkyapp_fn_func_session(FfiConverterString.lower(`pubky`),_status)
+})
+}
+
+
+fun `setApplicationDomain`(`domain`: String): List<String> {
+    return FfiConverterSequenceString.lift(
+    rustCall() { _status ->
+    _UniFFILib.INSTANCE.uniffi_pubkyapp_fn_func_set_application_domain(FfiConverterString.lower(`domain`),_status)
 })
 }
 
