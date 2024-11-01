@@ -23,6 +23,8 @@ pub use models::auth::*;
 pub use models::post::*;
 pub use models::tag::*;
 pub use models::user::*;
+pub use models::bookmark::*;
+pub use models::file::*;
 
 pub use traits::hash_id::*;
 pub use traits::timestamp_id::*;
@@ -34,8 +36,8 @@ pub use utils::helpers::*;
 pub use keypair::*;
 
 pub use auth::*;
-use crate::models::bookmark::PubkyAppBookmark;
-use crate::models::file::PubkyAppFile;
+pub use crate::models::bookmark::PubkyAppBookmark;
+pub use crate::models::file::PubkyAppFile;
 
 uniffi::setup_scaffolding!();
 
@@ -66,7 +68,10 @@ impl NetworkClient {
     }
 }
 
+static DEFAULT_APP_DOMAIN: &str = "pubky.app";
+
 static NETWORK_CLIENT: Lazy<NetworkClient> = Lazy::new(|| NetworkClient::new());
+static APP_DOMAIN: Lazy<Mutex<String>> = Lazy::new(|| Mutex::new(DEFAULT_APP_DOMAIN.to_string()));
 
 // Replace the old PUBKY_CLIENT with this
 pub fn get_pubky_client() -> Arc<PubkyClient> {
@@ -79,6 +84,23 @@ pub fn switch_network(use_testnet: bool) -> Vec<String> {
     create_response_vector(false, format!("Switched to {} network", if use_testnet { "testnet" } else { "mainnet" }))
 }
 
+#[uniffi::export]
+pub fn set_application_domain(domain: String) -> Vec<String> {
+    let mut current_domain = APP_DOMAIN.lock().unwrap();
+    if domain.is_empty() {
+        return create_response_vector(true, "Domain cannot be empty".to_string());
+    }
+    *current_domain = domain.clone();
+    create_response_vector(false, format!("Domain set to: {}", domain))
+}
+
+#[uniffi::export]
+pub fn reset_application_domain() -> Vec<String> {
+    let mut current_domain = APP_DOMAIN.lock().unwrap();
+    *current_domain = DEFAULT_APP_DOMAIN.to_string();
+    create_response_vector(false, "Domain reset to default".to_string())
+}
+
 static TOKIO_RUNTIME: Lazy<Arc<Runtime>> = Lazy::new(|| {
     Arc::new(
         Runtime::new().expect("Failed to create Tokio runtime")
@@ -87,7 +109,7 @@ static TOKIO_RUNTIME: Lazy<Arc<Runtime>> = Lazy::new(|| {
 
 // Social Functions
 #[uniffi::export]
-fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Vec<String> {
+pub fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
         let keypair = match get_keypair_from_secret_key(&secret_key) {
@@ -110,7 +132,8 @@ fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Ve
             Ok(json) => json,
             Err(error) => return create_response_vector(true, format!("Failed to serialize JSON: {}", error)),
         };
-        let url = format!("pubky://{}/pub/pubky.app/profile.json", user_id);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/profile.json", user_id, *domain);
         match client.put(url.as_str(), &profile_json).await {
             Ok(_) => create_response_vector(false, url),
             Err(error) => create_response_vector(true, format!("Failed to create user: {}", error)),
@@ -119,7 +142,7 @@ fn create_user(secret_key: String, user: PubkyAppUser, homeserver: String) -> Ve
 }
 
 #[uniffi::export]
-fn create_post(user_id: String, post: PubkyAppPost) -> Vec<String> {
+pub fn create_post(pubky: String, post: PubkyAppPost) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     runtime.block_on(async {
         let client = get_pubky_client();
@@ -128,7 +151,8 @@ fn create_post(user_id: String, post: PubkyAppPost) -> Vec<String> {
             Ok(json) => json,
             Err(error) => return create_response_vector(true, format!("Failed to serialize JSON: {}", error)),
         };
-        let url = format!("pubky://{}/pub/pubky.app/posts/{}", user_id, post_id);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/posts/{}", pubky, *domain, post_id);
         match client.put(url.as_str(), &post_json).await {
             Ok(_) => create_response_vector(false, post_id),
             Err(error) => create_response_vector(true, format!("Failed to create post: {}", error)),
@@ -137,12 +161,14 @@ fn create_post(user_id: String, post: PubkyAppPost) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
+pub fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
+        let domain = APP_DOMAIN.lock().unwrap();
+        let uri = format!("pubky://{}/pub/{}/posts/{}", pubky, *domain, post_id);
         let tag = PubkyAppTag {
-            uri: format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id),
+            uri,
             label,
             created_at: Utc::now().timestamp_millis(),
         };
@@ -151,8 +177,9 @@ fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
             Err(error) => return create_response_vector(true, format!("Failed to serialize JSON: {}", error)),
         };
         let tag_url = format!(
-            "pubky://{}/pub/pubky.app/tags/{}",
+            "pubky://{}/pub/{}/tags/{}",
             pubky,
+            *domain,
             tag.create_id()
         );
         let parsed_url = match Url::parse(&tag_url) {
@@ -169,11 +196,12 @@ fn create_tag(pubky: String, label: String, post_id: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn cleanup_user(pubky: String) -> Vec<String> {
+pub fn cleanup_user(pubky: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
-        let url = format!("pubky://{}/pub/pubky.app/profile.json", pubky);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/profile.json", pubky, *domain);
         let parsed_url = match Url::parse(&url) {
             Ok(url) => url,
             Err(_) => return create_response_vector(true, "Failed to parse URL".to_string()),
@@ -188,11 +216,12 @@ fn cleanup_user(pubky: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn cleanup_post(pubky: String, post_id: String) -> Vec<String> {
+pub fn cleanup_post(pubky: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
-        let url = format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/posts/{}", pubky, *domain, post_id);
         let parsed_url = match Url::parse(&url) {
             Ok(url) => url,
             Err(_) => return create_response_vector(true, "Failed to parse URL".to_string()),
@@ -207,7 +236,7 @@ fn cleanup_post(pubky: String, post_id: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn delete_tag(tag_url: String) -> Vec<String> {
+pub fn delete_tag(tag_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
@@ -225,12 +254,13 @@ fn delete_tag(tag_url: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
+pub fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
+        let domain = APP_DOMAIN.lock().unwrap();
         let bookmark = PubkyAppBookmark {
-            uri: format!("pubky://{}/pub/pubky.app/posts/{}", pubky, post_id),
+            uri: format!("pubky://{}/pub/{}/posts/{}", pubky, *domain, post_id),
             created_at: Utc::now().timestamp_millis(),
         };
         let bookmark_blob = match to_vec(&bookmark) {
@@ -239,8 +269,9 @@ fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
         };
         let bookmark_id = bookmark.create_id();
         let bookmark_url = format!(
-            "pubky://{}/pub/pubky.app/bookmarks/{}",
+            "pubky://{}/pub/{}/bookmarks/{}",
             pubky,
+            *domain,
             bookmark_id
         );
         let parsed_url = match Url::parse(&bookmark_url) {
@@ -257,7 +288,7 @@ fn create_bookmark(pubky: String, post_id: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn delete_bookmark(bookmark_url: String) -> Vec<String> {
+pub fn delete_bookmark(bookmark_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
@@ -275,7 +306,7 @@ fn delete_bookmark(bookmark_url: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn create_file(
+pub fn create_file(
     pubky: String,
     file: &PubkyAppFile,
 ) -> Vec<String> {
@@ -287,7 +318,8 @@ fn create_file(
             Ok(json) => json,
             Err(error) => return create_response_vector(true, format!("Failed to serialize JSON: {}", error)),
         };
-        let url = format!("pubky://{}/pub/pubky.app/files/{}", pubky, file_id);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/files/{}", pubky, *domain, file_id);
         let parsed_url = match Url::parse(&url) {
             Ok(url) => url,
             Err(_) => return create_response_vector(true, "Failed to parse URL".to_string()),
@@ -302,11 +334,12 @@ fn create_file(
 }
 
 #[uniffi::export]
-fn cleanup_file(pubky: String, file_id: String) -> Vec<String> {
+pub fn cleanup_file(pubky: String, file_id: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
-        let url = format!("pubky://{}/pub/pubky.app/files/{}", pubky, file_id);
+        let domain = APP_DOMAIN.lock().unwrap();
+        let url = format!("pubky://{}/pub/{}/files/{}", pubky, *domain, file_id);
         let parsed_url = match Url::parse(&url) {
             Ok(url) => url,
             Err(_) => return create_response_vector(true, "Failed to parse URL".to_string()),
@@ -321,7 +354,7 @@ fn cleanup_file(pubky: String, file_id: String) -> Vec<String> {
 }
 
 #[uniffi::export]
-fn create_follow(
+pub fn create_follow(
     follower_pubky: String,
     followee_pubky: String,
 ) -> Vec<String> {
@@ -335,9 +368,10 @@ fn create_follow(
             Ok(blob) => blob,
             Err(error) => return create_response_vector(true, format!("Failed to serialize JSON: {}", error)),
         };
+        let domain = APP_DOMAIN.lock().unwrap();
         let follow_url = format!(
-            "pubky://{}/pub/pubky.app/follows/{}",
-            follower_pubky, followee_pubky
+            "pubky://{}/pub/{}/follows/{}",
+            follower_pubky, *domain, followee_pubky
         );
         match client.put(follow_url.as_str(), &blob).await {
             Ok(_) => create_response_vector(false, follow_url),
@@ -349,7 +383,7 @@ fn create_follow(
 }
 
 #[uniffi::export]
-fn delete_follow(follow_url: String) -> Vec<String> {
+pub fn delete_follow(follow_url: String) -> Vec<String> {
     let runtime = TOKIO_RUNTIME.clone();
     let client = get_pubky_client();
     runtime.block_on(async {
@@ -681,7 +715,9 @@ pub fn sign_in(secret_key: String) -> Vec<String> {
             Err(error) => return create_response_vector(true, error),
         };
         match client.signin(&keypair).await {
-            Ok(_) => create_response_vector(false, "Sign in success".to_string()),
+            Ok(session) => {
+                create_response_vector(false, session.pubky().to_string())
+            },
             Err(error) => {
                 create_response_vector(true, format!("Failed to sign in: {}", error))
             }
